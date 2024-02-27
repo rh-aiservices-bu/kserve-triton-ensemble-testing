@@ -10,4 +10,10 @@ I have replaced the xgboost model with a dummy one as model binaries could have 
 The yaml you can use the same as any other model, just change the path to the directory where you have 3 models placed.
 
 
+## essentially:
+
+* content of model01/xgb_v2 needs to be upload to S3
+* then we need to define either 1 model (root folder)
+* or maybe we need to define 3 models 1 for each of the 3 folders
+* then we need to send a payload to the main model (ensemble_merger..) and ensure it goes through both feature_merger and superset
 
