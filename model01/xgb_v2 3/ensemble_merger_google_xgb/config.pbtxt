@@ -1,0 +1,45 @@
+name: "ensemble_merger_google_xgb"
+platform: "ensemble"
+max_batch_size: 16
+input [
+  {
+    name: "INPUT"
+    data_type: TYPE_FP32
+    dims: [ 63 ]
+  }
+]
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_FP32
+    dims: [ 7 ]
+  }
+]
+ensemble_scheduling {
+  step [
+    {
+      model_name: "feature_merger"
+      model_version: -1
+      input_map {
+        key: "INPUT_0"
+        value: "INPUT"
+      }
+      output_map {
+        key: "OUTPUT_0"
+        value: "merged_features"
+      }
+    },
+    {
+      model_name: "superset_google_xgb"
+      model_version: -1
+      input_map {
+        key: "input__0"
+        value: "merged_features"
+      }
+      output_map {
+        key: "output__0"
+        value: "OUTPUT"
+      }
+    }
+  ]
+}
