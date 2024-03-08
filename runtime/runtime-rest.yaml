@@ -1,0 +1,86 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+labels:
+  opendatahub.io/dashboard: "true"
+metadata:
+  name: tritonserver-24.01-py3-rest
+  labels:
+    name: tritonserver-24.01-py3
+  annotations:
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+    openshift.io/display-name: Triton runtime 24.01 - added on 20240228 - REST
+    maxLoadingConcurrency: "2"
+spec:
+  supportedModelFormats:
+    - name: keras
+      version: "2"
+      autoSelect: true
+    - name: onnx
+      version: "1"
+      autoSelect: true
+    - name: pytorch
+      version: "1"
+      autoSelect: true
+    - name: tensorflow
+      version: "1"
+      autoSelect: true
+    - name: python
+      version: "1"
+      autoSelect: true
+    - name: tensorrt
+      version: "7"
+      autoSelect: true
+    - name: bls
+      version: "1"
+      autoSelect: true
+    - name: ensemble
+      version: "1"
+      autoSelect: true
+    - name: fil
+      version: "1"
+      autoSelect: true
+  protocolVersions:
+    - grpc-v2
+  multiModel: false
+  containers:
+    - name: kserve-container
+      image: nvcr.io/nvidia/tritonserver:24.01-py3
+      command:
+        - tritonserver
+      args:
+        - --model-repository=/mnt/models/
+        - --model-control-mode=explicit
+        - --disable-auto-complete-config
+        - --strict-readiness=false
+        - --allow-http=true
+        - --allow-sagemaker=false
+        - --load-model=*
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: "5"
+          memory: 4Gi
+      ports:
+        - containerPort: 8000
+          name: http1
+          protocol: TCP
+      livenessProbe:
+        exec:
+          command:
+            - curl
+            - --fail
+            - --silent
+            - --show-error
+            - --max-time
+            - "9"
+            - http://localhost:8000/v2/health/live
+        initialDelaySeconds: 5
+        periodSeconds: 30
+        timeoutSeconds: 10
+  builtInAdapter:
+    serverType: triton
+    runtimeManagementPort: 8001
+    memBufferBytes: 134217728
+    modelLoadingTimeoutMillis: 90000

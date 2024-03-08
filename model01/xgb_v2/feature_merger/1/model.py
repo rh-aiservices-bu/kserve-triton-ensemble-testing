@@ -40,24 +40,20 @@ class TritonPythonModel:
         for request in requests:
             # Get INPUT0
             in_0 = pb_utils.get_input_tensor_by_name(request, "INPUT_0").as_numpy()
+            print(in_0)
             
-            card_number = 123456789
-            
-            feature_vector_list = ['12','23','45'] #eval(self.redis_db.get(card_number))
-            
-            full_feature_list = in_0.tolist()[0] + feature_vector_list
+            # Generate another set of features
+            supplemental_data = np.arange(start=0, stop=141, dtype=np.float32)
 
-            feature_merger_output = np.asarray([full_feature_list]).astype(np.float32)
+            feature_merger_output = np.concatenate((in_0[0],supplemental_data),axis=0)
+            feature_merger_output = np.expand_dims(feature_merger_output, axis=0)
 
             out_tensor_0 = pb_utils.Tensor("OUTPUT_0", feature_merger_output)
 
             inference_response = pb_utils.InferenceResponse(
                 output_tensors=[out_tensor_0])
             responses.append(inference_response)
-
-            print(responses)
-            print(out_tensor_0)
-            
+           
         return responses
 
     def finalize(self):

@@ -1,19 +1,15 @@
 # Ensemble Models Example with Triton and Kserve
 
-Notes:
+## Deployment
 
-The ensemble.zip contains a folder which you can upload to object storage. The folder contains 3 models, ensemble_merger_google_xgb(ensembling logic), feature_merger(python backend) and the superset_google_xgb(xgboost – fil backend). The configuration file for all models in inside them so you can see the ensembling logic and how first one is dependent on second and third.
+- The [Ensemble](https://developer.nvidia.com/blog/serving-ml-model-pipelines-on-nvidia-triton-inference-server-with-ensemble-models/) model is available in the `model01` folder.
+- The whole content of the model folder must be uploaded to an object store bucket.
+- In OpenShift AI, create a Data Connection pointing to this bucket.
+- Import the custom runtime for Triton in OpenShift AI, as a Single Model Serving runtime. Two different runtimes are provided in the `runtime` folder, depending if you want to use the gRPC or REST API.
+- Serve the model in OpenShift AI using the custom runtime you imported, pointing it to the data connection.
 
-I have replaced the xgboost model with a dummy one as model binaries could have confidential data. So, there is a chance it can run into ‘wrong parameter shapes’ error but if you reach to that stage, it would be a good error. Hopefully it will serve the purpose for you to test the ensemble models.
+## Usage
 
+Two example notebooks are provided as examples to connect to the model using either gRPC or REST.
 
-The yaml you can use the same as any other model, just change the path to the directory where you have 3 models placed.
-
-
-## essentially:
-
-* content of model01/xgb_v2 needs to be upload to S3
-* then we need to define either 1 model (root folder)
-* or maybe we need to define 3 models 1 for each of the 3 folders
-* then we need to send a payload to the main model (ensemble_merger..) and ensure it goes through both feature_merger and superset
-
+Please note that this model is just a stub that does mostly nothing except going trough different steps to illustrate how Ensemble in Triton works.
