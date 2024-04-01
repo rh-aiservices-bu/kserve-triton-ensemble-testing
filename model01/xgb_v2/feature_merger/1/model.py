@@ -10,16 +10,9 @@ import subprocess
 
 from datetime import datetime
 
-# import redis
-
-
 class TritonPythonModel:
 
     def initialize(self, args):
-        
-        
-        # self.redis_db = redis.Redis(host='redis-service', port=6379, db=0, decode_responses=True)
-
         self.model_config = model_config = json.loads(args['model_config'])
 
         # Get OUTPUT0 configuration
